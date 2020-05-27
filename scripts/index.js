@@ -1,4 +1,5 @@
-const deadline = new Date("May 29, 2020 00:00:00").getTime();
+let deadline;
+let pic_link;
 
 function createText(element_to_append, text, element_type = "div") {
   const p = document.createElement(element_type);
@@ -9,12 +10,12 @@ function createText(element_to_append, text, element_type = "div") {
 function createAnchorTag(element) {
   const a = document.createElement('a');
   // Create the text node for anchor element. 
-  const link = document.createTextNode("Here"); 
+  const link = document.createTextNode("Here");
 
   // Append the text node to anchor element. 
   a.appendChild(link);
 
-  a.href = LINK;
+  a.href = pic_link;
   a.setAttribute('target', '_blank');
   element.appendChild(a);
 }
@@ -48,5 +49,26 @@ function timer() {
 }
 
 (function () {
-  timer();
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function () {
+    if (xmlhttp.readyState == XMLHttpRequest.DONE) {
+      if (xmlhttp.status === 200) {
+        const response = JSON.parse(xmlhttp.responseText);
+        pic_link = response.link;
+        deadline = response.deadline;
+        timer();
+      }
+      else if (xmlhttp.status == 400) {
+        alert('There was an error 400');
+      }
+      else {
+        alert('something else other than 200 was returned');
+      }
+    } else if (xmlhttp.readyState == XMLHttpRequest.LOADING) {
+      document.getElementById("timer").innerHTML = "Loading..."
+    }
+  };
+
+  xmlhttp.open("GET", "/init", true);
+  xmlhttp.send();
 })();
