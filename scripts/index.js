@@ -49,6 +49,7 @@ function timer() {
 }
 
 (function () {
+  console.log("HOST: ", HOST);
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function () {
     if (xmlhttp.readyState == XMLHttpRequest.DONE) {
