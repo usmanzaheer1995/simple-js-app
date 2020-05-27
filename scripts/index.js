@@ -14,8 +14,7 @@ function createAnchorTag(element) {
   // Append the text node to anchor element. 
   a.appendChild(link);
 
-  // a.href = LINK;
-  a.href = "ASD";
+  a.href = LINK;
   a.setAttribute('target', '_blank');
   element.appendChild(a);
 }
