@@ -1,6 +1,5 @@
 let deadline;
 let pic_link;
-
 function createText(element_to_append, text, element_type = "div") {
   const p = document.createElement(element_type);
   p.innerHTML = text;
@@ -29,7 +28,7 @@ function wrapper(element) {
 }
 
 function timer() {
-  const x = setInterval(function () {
+  const x = setInterval(async function () {
     const now = new Date().getTime();
     const t = deadline - now;
     const days = Math.floor(t / (1000 * 60 * 60 * 24));
@@ -40,6 +39,9 @@ function timer() {
       + hours + "h " + minutes + "m " + seconds + "s ";
     if (t < 0) {
       clearInterval(x);
+      let response = await fetch(`/init`);
+      response = await response.json();
+      pic_link = response.link;
       const timer = document.getElementById("timer");
       timer.innerHTML = "";
       createText(timer, "Congratulations on turning 25!")
@@ -48,27 +50,20 @@ function timer() {
   }, 1000);
 }
 
-(function () {
-  var xmlhttp = new XMLHttpRequest();
-  xmlhttp.onreadystatechange = function () {
-    if (xmlhttp.readyState == XMLHttpRequest.DONE) {
-      if (xmlhttp.status === 200) {
-        const response = JSON.parse(xmlhttp.responseText);
-        pic_link = response.link;
-        deadline = response.deadline;
-        timer();
-      }
-      else if (xmlhttp.status == 400) {
-        alert('There was an error 400');
-      }
-      else {
-        alert('something else other than 200 was returned');
-      }
-    } else if (xmlhttp.readyState == XMLHttpRequest.LOADING) {
-      document.getElementById("timer").innerHTML = "Loading..."
-    }
-  };
+async function init () {
+  document.getElementById("timer").innerHTML = "Loading..."
+  try {
+    let response = await fetch(`/init`);
+    response = await response.json();
+    pic_link = response.link;
+    deadline = response.deadline;
+    timer();
+  } catch (err) {
+    document.getElementById("timer").innerHTML = ""
+    alert('something else other than 200 was returned');
+  }
+}
 
-  xmlhttp.open("GET", "/init", true);
-  xmlhttp.send();
+(function () {
+  init();
 })();
